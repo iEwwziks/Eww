@@ -1,0 +1,135 @@
+-- main.lua
+local Lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/7yhx/kwargs_Ui_Library/main/source.lua"))()
+
+local UI = Lib:Create{
+   Theme = "Dark",
+   Size = UDim2.new(0, 555, 0, 400)
+}
+
+local Main = UI:Tab{
+   Name = "Main"
+}
+
+local Divider = Main:Divider{
+   Name = "Main Options"
+}
+
+local QuitDivider = Main:Divider{
+   Name = "Quit"
+}
+
+-- Botão para iniciar a busca por cores escuras
+local BuscarCorEscura = Divider:Button{
+   Name = "Buscar Cor Escura",
+   Description = "Inicia a busca por cores escuras na imagem.",
+   Callback = function()
+       encontrou_cor_escura = false
+       carregarImagem()
+       print("Iniciando a busca por cores escuras...")
+   end
+}
+
+local KillAll = Divider:Button{
+   Name = "Kill all",
+   Description = "Kills all the players in the game!",
+   Callback = function()
+       print("All players killed.")
+   end
+}
+
+local LoopKillAll = Divider:Toggle{
+   Name = "Loop kill all",
+   Description = "Loop kills everyone in the game.",
+   Callback = function(State)
+       print("Kill state: ", State)
+   end
+}
+
+local OtherToggleStyle = Divider:Toggle{
+   Name = "2nd style of toggle",
+   Style = 2
+}
+
+local Players = Divider:Dropdown{
+   Name = "Player list",
+   Options = {"Player1", "Player2", "Player3", "Player4", "Player5"},
+   Callback = function(Value)
+       print(Value)
+   end
+}
+
+Divider:ColorPicker{
+   Name = "ESP color",
+   Default = Color3.fromRGB(0, 255, 255),
+   Callback = function(Value)
+       print(Value)
+   end
+}
+
+Divider:Box{
+   Name = "Car name",
+   ClearText = true,
+   Callback = function(Value)
+       print(Value)
+   end
+}
+
+Divider:SearchDropdown{
+   Name = "Teleports",
+   Options = {"Pleasant Park", "Loot Lake", "Tomato Town", "Wailing Woods", "Anarchy Acres", "Retail Row"},
+   ClearText = false,
+   Callback = function(Value)
+       print(Value)
+   end
+}
+
+local Quit = QuitDivider:Button{
+   Name = "Closes the ui library.",
+   Callback = function()
+       UI:Quit{
+           Message = "Goodbye...",
+           Length = 1
+       }
+   end
+}
+
+function love.load()
+    local function carregarImagem()
+        imagem = love.graphics.newImage("sua_imagem_aqui.png")
+        largura = imagem:getWidth()
+        altura = imagem:getHeight()
+    end
+
+    limite = 10
+
+    local function ePretoOuEscuro(r, g, b)
+        return (r * 255 <= limite and g * 255 <= limite e b * 255 <= limite)
+    end
+
+    encontrou_cor_escura = false
+    carregarImagem()
+end
+
+function love.update(dt)
+    if not encontrou_cor_escura then
+        for y = 1, altura do
+            for x = 1, largura do
+                r, g, b, a = imagem:getPixel(x - 1, y - 1)
+                if ePretoOuEscuro(r, g, b) then
+                    print("Cor escura encontrada em: (" .. x .. ", " .. y .. ")")
+                    encontrou_cor_escura = true
+                    break
+                end
+            end
+            if encontrou_cor_escura então break end
+        end
+
+        if not encontrou_cor_escura então
+            carregarImagem()
+        end
+    end
+end
+
+function love.draw()
+    love.graphics.draw(imagem, 0, 0)
+end
